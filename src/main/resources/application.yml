@@ -4,56 +4,6 @@ server:
 spring:
   application:
     name: synapse-gateway
-  cloud:
-    gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowed-origins:
-              - "http://localhost:3000"
-              - "http://localhost:8080"
-            allowed-methods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - PATCH
-              - OPTIONS
-            allowed-headers: "*"
-            allow-credentials: true
-            max-age: 3600
-      default-filters:
-        - name: RequestRateLimiter
-          args:
-            redis-rate-limiter.replenishRate: 1
-            redis-rate-limiter.burstCapacity: 60
-            redis-rate-limiter.requestedTokens: 1
-            key-resolver: "#{@ipKeyResolver}"
-      routes:
-        - id: platform-svc
-          uri: ${PLATFORM_SVC_URI:http://platform-svc:8080}
-          predicates:
-            - Path=/api/platform/**
-          filters:
-            - StripPrefix=2
-        - id: engagement-svc
-          uri: ${ENGAGEMENT_SVC_URI:http://engagement-svc:8080}
-          predicates:
-            - Path=/api/engagement/**
-          filters:
-            - StripPrefix=2
-        - id: knowledge-svc
-          uri: ${KNOWLEDGE_SVC_URI:http://knowledge-svc:8080}
-          predicates:
-            - Path=/api/knowledge/**
-          filters:
-            - StripPrefix=2
-        - id: learning-svc
-          uri: ${LEARNING_SVC_URI:http://learning-card-svc:8080}
-          predicates:
-            - Path=/api/learning/**
-          filters:
-            - StripPrefix=2
   data:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:localhost}
@@ -64,7 +14,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,gateway
   endpoint:
     health:
       show-details: always
+    gateway:
+      enabled: true
