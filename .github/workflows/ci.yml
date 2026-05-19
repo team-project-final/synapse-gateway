@@ -24,4 +24,4 @@ jobs:
           cache: gradle
 
       - name: Build
-        run: ./gradlew clean build --no-daemon
+        run: chmod +x gradlew && ./gradlew clean build --no-daemon
