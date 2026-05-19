@@ -1,0 +1,27 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java / Gradle
+build/
+.gradle/
+bin/
+out/
+*.class
+*.jar
+*.war
+hs_err_pid*
+
+# Gradle wrapper must be committed
+!gradle/wrapper/gradle-wrapper.jar
