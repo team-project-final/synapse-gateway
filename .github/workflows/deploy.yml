@@ -2,7 +2,7 @@ name: Deploy to Dev
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths-ignore:
       - 'docs/**'
       - '*.md'
@@ -30,7 +30,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@v3
 
       - name: Build and push Docker image
         env:
