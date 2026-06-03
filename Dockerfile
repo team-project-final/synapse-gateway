@@ -11,6 +11,9 @@ RUN ./gradlew bootJar --no-daemon
 # Stage 2: Runtime
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+RUN addgroup -g 101 -S app && adduser -u 101 -S -G app app
 COPY --from=builder /app/build/libs/*.jar app.jar
+RUN chown app:app app.jar
+USER app
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
