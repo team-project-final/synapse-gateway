@@ -20,3 +20,12 @@ management:
       show-details: always
     gateway:
       enabled: true
+
+gateway:
+  jwt:
+    # 운영 공개키는 gateway-secret 의 JWT_PUBLIC_KEY(PEM, gitops PR #128)로 주입.
+    # 미설정 시 디코더 빈이 기동 단계에서 fail-fast (의도된 동작).
+    public-key: ${JWT_PUBLIC_KEY:}
+    # platform synapse.jwt.issuer 와 동일해야 함 (application-{dev,staging,prod}.yml).
+    issuer: ${JWT_ISSUER:synapse-auth}
+    # public-paths 기본값은 GatewayJwtProperties.DEFAULT_PUBLIC_PATHS. 필요 시 여기서 오버라이드.
