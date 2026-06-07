@@ -31,6 +31,8 @@ class GatewaySecurityIntegrationTest {
         registry.add("management.health.redis.enabled", () -> "false");
         // 업스트림은 즉시 연결거부되는 주소로 고정 (인증 통과 후 다운스트림 라우팅 분리).
         registry.add("PLATFORM_SVC_URI", () -> "http://localhost:1");
+        // 프론트 업스트림도 즉시 연결거부 주소로 고정 (인증 통과 후 라우팅 시도 → 5xx).
+        registry.add("FRONTEND_SVC_URI", () -> "http://localhost:1");
     }
 
     @Test
@@ -81,6 +83,29 @@ class GatewaySecurityIntegrationTest {
         String token = TestKeys.accessToken("u", List.of("USER"));
         client.get().uri("/api/platform/api/v1/users/me")
                 .header("Authorization", "Bearer " + token)
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+
+    @Test
+    void spaRootIsPublicAndRoutedToFrontend() {
+        // "/" 는 공개(permitAll) → 인증 통과 후 dead 업스트림으로 라우팅 → 5xx (401 아님).
+        client.get().uri("/")
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+
+    @Test
+    void spaDeepLinkIsPublic() {
+        // go_router 딥링크 새로고침 경로도 공개여야 SPA 로드 가능.
+        client.get().uri("/dashboard/notes/42")
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+
+    @Test
+    void staticAssetPathIsPublic() {
+        client.get().uri("/flutter_bootstrap.js")
                 .exchange()
                 .expectStatus().is5xxServerError();
     }

@@ -33,8 +33,12 @@ public class SecurityConfig {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // 공개 경로(actuator·auth 엔드포인트 등)는 /api/** 인증 규칙보다 먼저 매칭.
                         .pathMatchers(publicPaths).permitAll()
-                        .anyExchange().authenticated())
+                        // API는 인증 필수 (공개 경로 제외).
+                        .pathMatchers("/api/**").authenticated()
+                        // 그 외(SPA 셸·정적 자산·딥링크)는 공개 — gateway가 frontend로 프록시.
+                        .anyExchange().permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .jwt(Customizer.withDefaults()))
