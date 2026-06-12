@@ -14,7 +14,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        # prometheus 추가(#7): gitops ServiceMonitor가 /actuator/prometheus 스크랩 → 미노출 시 404→TargetDown firing.
+        include: health,info,gateway,prometheus
   endpoint:
     health:
       show-details: always
