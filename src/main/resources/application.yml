@@ -1,7 +1,12 @@
 server:
   port: 8080
+  # 진행 중 요청을 처리한 뒤 종료(무중단 배포, gitops #98의 preStop+terminationGracePeriod와 정합).
+  shutdown: graceful
 
 spring:
+  # gateway는 preStop 10s라 drain 예산을 20s로 둔다(preStop 10s + 20s < grace 40s).
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
   application:
     name: synapse-gateway
   data:
